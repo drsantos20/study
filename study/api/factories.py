@@ -16,8 +16,6 @@ class UserFactory(factory.django.DjangoModelFactory):
 
 class LessonFactory(factory.django.DjangoModelFactory):
     topic = factory.Faker('pystr')
-    reminder_date = factory.LazyFunction(datetime.date.today)
-    user = factory.SubFactory(UserFactory)
 
     class Meta:
         model = Lesson
