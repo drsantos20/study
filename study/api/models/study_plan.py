@@ -1,8 +1,9 @@
-from django.contrib.auth.models import User
 from django.db import models
+
+from study.api.models import UserMembership
 
 
 class StudyPlan(models.Model):
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_membership = models.ForeignKey(UserMembership, on_delete=models.CASCADE)
     reminder_date = models.DateField(null=True, blank=True)
