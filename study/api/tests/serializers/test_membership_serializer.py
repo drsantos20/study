@@ -46,4 +46,3 @@ class TestSubscriptionSerializer(TestCase):
         serializer = SubscriptionSerializer(instance=self.subscription)
         self.assertEqual(serializer.data['active'], self.subscription.active)
         self.assertEqual(serializer.data['user_membership'], self.subscription.user_membership_id)
-
