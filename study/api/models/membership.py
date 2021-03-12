@@ -21,7 +21,7 @@ class Membership(models.Model):
 
 class UserMembership(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='user_membership', on_delete=models.CASCADE)
-    membership = models.ForeignKey(Membership, related_name='user_membership', on_delete=models.SET_NULL, null=True)
+    membership = models.OneToOneField(Membership, unique=True, related_name='user_membership', on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return self.user.username
