@@ -24,6 +24,8 @@ router.register(r'lesson', viewsets.LessonViewSet, basename='lesson')
 router.register(r'user-membership', viewsets.UserMembershipViewSet, basename='user-membership')
 router.register(r'subscription', viewsets.SubscriptionViewSet, basename='subscription')
 
+
 urlpatterns = [
     path('', include(router.urls)),
+    path('account/register', viewsets.UserCreateViewSet.as_view()),
 ]
