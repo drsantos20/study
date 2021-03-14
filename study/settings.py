@@ -102,6 +102,30 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+import os
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'propagate': False,
+        },
+    },
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
@@ -120,3 +144,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+BROKER_URL = 'amqp://user:password@localhost:5672'
+CELERY_BROKER_URL = 'amqp://user:password@localhost:5672'
+
+# Send emails on console
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
