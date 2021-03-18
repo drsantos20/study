@@ -1,9 +1,8 @@
-import datetime
-
 import factory
 from django.contrib.auth.models import User
 
 from study.api.models import Lesson, Membership, UserMembership, Subscription
+from study.api.models.order import Order
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -40,3 +39,11 @@ class SubscriptionFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Subscription
+
+
+class OrderFactory(factory.django.DjangoModelFactory):
+    membership = factory.SubFactory(MembershipFactory)
+    user = factory.SubFactory(UserFactory)
+
+    class Meta:
+        model = Order
