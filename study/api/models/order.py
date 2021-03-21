@@ -4,11 +4,16 @@ from django_extensions.db.models import TimeStampedModel
 from study.api.models import Membership
 
 
+PENDING = 'Pending'
+SUCCESS = 'Success'
+DECLINED = 'Declined'
+
+
 class Order(TimeStampedModel):
     ORDER_STATUS = (
-        ('Pending', 'pending'),
-        ('Success', 'success'),
-        ('Declined', 'declined'),
+        (PENDING, 'pending'),
+        (SUCCESS, 'success'),
+        (DECLINED, 'declined'),
     )
 
     order_status = models.CharField(
