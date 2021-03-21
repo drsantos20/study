@@ -1,0 +1,64 @@
+version: '3.5'
+services:
+
+  study:
+    build: .
+    image: &study api
+    restart: "no"
+    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    env_file: &envfile
+      - environment.env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./study:/study
+    depends_on:
+      - postgres
+      - broker
+    networks:
+      - proxynet
+    links:
+      - postgres
+
+  worker:
+    build: .
+    restart: "no"
+    env_file:
+      - environment.env
+    command: celery -A study worker -l info -n worker10.%h
+    volumes:
+      - ./study:/study
+    networks:
+      - proxynet
+    depends_on:
+      - postgres
+      - broker
+
+  postgres:
+    image: postgres:10.1-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=dev
+      - POSTGRES_USER=dev
+      - POSTGRES_PASSWORD=dev123
+    networks:
+      - proxynet
+
+  broker:
+    image: "rabbitmq:3-management"
+    env_file: *envfile
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - proxynet
+
+volumes:
+  postgres_data:
+
+networks:
+  proxynet:
+    name: custom_network
