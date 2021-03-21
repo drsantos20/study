@@ -9,6 +9,8 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
+import os
+import sys
 
 from pathlib import Path
 
@@ -27,6 +29,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+TESTING = len(sys.argv) > 1 and sys.argv[1] == 'test'
 
 # Application definition
 
@@ -84,13 +87,23 @@ WSGI_APPLICATION = 'study.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+
+host = 'postgres'
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'dev',
+        'USER': 'dev',
+        'PASSWORD': 'dev123',
+        'HOST': host,
+        'PORT': 5432,
+        'TEST': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -109,9 +122,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
-
-import os
 
 
 LOGGING = {
@@ -161,4 +171,8 @@ CELERY_BROKER_URL = 'amqp://user:password@localhost:5672'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 SITE_ID = 1
 
-PAYMENT_GATEWAY_URL = 'https://run.mocky.io/v3/8017d250-3354-4e15-a573-202cc1c688ec'
+PAYMENT_GATEWAY_URL = 'https://run.mocky.io/v3/6d02fd73-86e6-4cb6-a3eb-79c13a50f0a8'
+
+if TESTING:
+    DATABASES['default']['ENGINE'] = 'django.db.backends.sqlite3'
+    DATABASES['default']['NAME'] = BASE_DIR / 'db.sqlite3'
