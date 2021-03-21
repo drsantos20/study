@@ -43,9 +43,11 @@ INSTALLED_APPS = [
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
+    'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
-    ],
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'PAGE_SIZE': 10
 }
 
 MIDDLEWARE = [
@@ -158,3 +160,5 @@ CELERY_BROKER_URL = 'amqp://user:password@localhost:5672'
 # Send emails on console
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 SITE_ID = 1
+
+PAYMENT_GATEWAY_URL = 'https://run.mocky.io/v3/8017d250-3354-4e15-a573-202cc1c688ec'
