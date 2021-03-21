@@ -1,23 +1,24 @@
 import json
+from unittest.mock import patch
 
 from django.urls import reverse
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.views import status
 
 from study.api.factories import OrderFactory, UserFactory, UserMembershipFactory
-from study.api.models import UserMembership, Order
+from study.api.models import Order
 from study.api.tests.utils import get_token_from_user, create_token
 
 
 class TestOrderViewSet(APITestCase):
     def setUp(self) -> None:
-        self.user = UserFactory()
+        self.user = UserFactory(first_name='John Due')
         self.user_membership = UserMembershipFactory(user=self.user)
         self.client = APIClient()
         create_token(user=self.user)
 
     def test_list_orders_from_user(self):
-        order = OrderFactory(user=self.user)
+        OrderFactory(user=self.user)
 
         token = get_token_from_user(user=self.user)
 
@@ -65,8 +66,11 @@ class TestOrderViewSet(APITestCase):
         response = self.client.get(
             reverse('order-get-order-detail', kwargs={'version': 'v1', 'pk': order.id}),
         )
-
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-
+    @patch('study.api.tasks.request_order_payment')
+    def test_create_payment_request(self, payment_order_request):
+        order = OrderFactory()
+        payment_order_request(order.id)
+        payment_order_request.assert_called_with(1)
 

@@ -1,8 +1,9 @@
 from unittest.mock import MagicMock, patch
 
-from django.contrib.auth.models import User
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.views import status
+
+from study.api.factories import UserFactory
 
 
 class TestUserViewSet(APITestCase):
@@ -23,10 +24,6 @@ class TestUserViewSet(APITestCase):
 
     @patch('study.api.tasks.create_user_membership')
     def test_create_membership_when_user_is_created(self, create_membership):
-        user = User.objects.create(
-            username='drsantos20',
-            email='drsantos20@gmail.com',
-            password='q1w2e3',
-        )
+        user = UserFactory()
         create_membership(user.id)
         create_membership.assert_called_with(1)
