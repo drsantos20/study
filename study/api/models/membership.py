@@ -1,9 +1,12 @@
 from django.db import models
 from django.conf import settings
 
+PREMIUM = 'Premium'
+FREE = 'Free'
+
 MEMBERSHIP_CHOICES = (
-    ('Premium', 'pre'),
-    ('Free', 'free')
+    (PREMIUM, 'pre'),
+    (FREE, 'free')
 )
 
 
