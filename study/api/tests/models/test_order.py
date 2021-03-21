@@ -1,13 +1,18 @@
 from unittest import TestCase
 
-from study.api.factories import OrderFactory, MembershipFactory, UserMembershipFactory, SubscriptionFactory
+from study.api.factories import OrderFactory, MembershipFactory, UserMembershipFactory, SubscriptionFactory, UserFactory
 from study.api.models.order import Order
+from study.api.models.membership import PREMIUM, FREE, UserMembership
+from study.api.tasks import update_user_membership
 
 
 class TestOrder(TestCase):
     def setUp(self) -> None:
         self.membership = MembershipFactory(price=10.00)
         self.order = OrderFactory(membership=self.membership)
+
+        self.user = UserFactory(first_name='John Due')
+        self.user_membership = UserMembershipFactory(user=self.user)
 
     def test_order_model(self):
         order = Order.objects.get(id=self.order.id)
@@ -16,3 +21,13 @@ class TestOrder(TestCase):
         # Always pending
         self.assertEqual(order.total_price, 10.00)
         self.assertEqual(order.order_status, 'Pending')
+
+    def test_update_user_membership_when_payment_processed_successfully(self):
+        OrderFactory(user=self.user)
+
+        user_membership = UserMembership.objects.get(id=self.user_membership.id)
+
+        self.assertEqual(user_membership.membership.membership_type, FREE)
+        update_user_membership(user_id=self.user.id)
+        user_membership.refresh_from_db()
+        self.assertEqual(user_membership.membership.membership_type, PREMIUM)
