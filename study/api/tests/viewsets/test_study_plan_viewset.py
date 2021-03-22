@@ -5,7 +5,7 @@ from rest_framework.test import APITestCase, APIClient
 from rest_framework.views import status
 
 from study.api.factories import LessonFactory, UserFactory, UserMembershipFactory, StudyPlanFactory, MembershipFactory
-from study.api.models.membership import PREMIUM, FREE
+from study.api.models.membership import PREMIUM
 from study.api.tests.utils import create_token, get_token_from_user
 
 
@@ -29,6 +29,9 @@ class TestStudyPlanViewSet(APITestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        study_plan_data = json.loads(response.content)[0]
+        self.assertEqual(study_plan_data['id'], self.study_plan.id)
+        self.assertEqual(study_plan_data['lessons'][0]['topic'], self.study_plan.lessons.all()[0].topic)
 
     def test_study_plan_aggregated_data_feature_for_premium_accounts(self):
         token = get_token_from_user(user=self.user)
