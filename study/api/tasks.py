@@ -6,11 +6,12 @@ from celery.decorators import task
 from celery.utils.log import get_task_logger
 from django.contrib.auth.models import User
 
-from study.api.emails import send_subscription_email, send_order_payment_confirmation_email
+from study.api.emails import send_subscription_email, send_order_payment_status_email
 from study.api.models import Membership, UserMembership, Subscription, Order
 from study.api.models.membership import PREMIUM
 from study.api.models.order import SUCCESS
 from study.api.utils.payment_response import PaymentResponse
+from study.api.utils.payment_status_code import payment_status_code
 from study.settings import PAYMENT_GATEWAY_URL
 
 logger = get_task_logger(__name__)
@@ -33,25 +34,24 @@ def create_user_membership(user_id):
 @task(autoretry_for=(Exception, ConnectionError,), retry_kwargs={'max_retries': 5})
 def request_order_payment(order_id):
     logger.info('Message arrived with the following body {}'.format(order_id))
+    order = Order.objects.get(id=order_id)
 
     try:
         payment_request = requests.post(PAYMENT_GATEWAY_URL, headers={'Content-Type': 'application/json'})
 
+        """ Retry payment in case of network issues """
         if payment_request.status_code == 408:
             raise ConnectionError()
 
-        if payment_request.status_code == 200:
-            response_data = json.loads(payment_request.content)
-            payment_response_data = PaymentResponse(**response_data)
+        response_data = json.loads(payment_request.content)
+        payment_response_data = PaymentResponse(**response_data)
 
-            if payment_response_data.payment_status == 'accepted':
-                order = Order.objects.get(id=order_id)
-                order.order_status = SUCCESS
-                order.save()
+        status = payment_status_code(status_code=payment_response_data.payment_status_code)
+        order.order_status = status
+        order.save()
 
-                update_user_membership.delay(user_id=order.user.id)
-                """sends an email when user membership is created successfully"""
-                return send_order_payment_confirmation_email(email=order.user.email)
+        """sends an email when order is processed successfully"""
+        return send_order_payment_status_email(email=order.user.email, order_status=order.order_status)
 
     except (ConnectionError, Exception):
         logger.error('exception raised, it would be retry after 5 seconds')

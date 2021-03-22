@@ -7,6 +7,7 @@ from study.api.models import Membership
 PENDING = 'Pending'
 SUCCESS = 'Success'
 DECLINED = 'Declined'
+INSUFFICIENT_FOUNDS = 'Insufficient Founds'
 
 
 class Order(TimeStampedModel):
@@ -14,6 +15,7 @@ class Order(TimeStampedModel):
         (PENDING, 'pending'),
         (SUCCESS, 'success'),
         (DECLINED, 'declined'),
+        (INSUFFICIENT_FOUNDS, 'Insufficient Founds')
     )
 
     order_status = models.CharField(
