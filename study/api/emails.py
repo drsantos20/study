@@ -9,6 +9,6 @@ def send_subscription_email(first_name, account_type):
     logger.info(email_body)
 
 
-def send_order_payment_confirmation_email(email):
-    email_body = 'Order Conformation \n hello {} Your Payment Was Confirmed'.format(email)
+def send_order_payment_status_email(email, order_status):
+    email_body = 'Order Status \n hello {} Your Payment status is {}'.format(email, order_status)
     logger.info(email_body)
