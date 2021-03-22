@@ -1,9 +1,9 @@
 from django.db import models
 
-from study.api.models import UserMembership
-
 
 class StudyPlan(models.Model):
 
-    user_membership = models.ForeignKey(UserMembership, on_delete=models.CASCADE)
+    name = models.CharField(max_length=35, null=True)
+    user_membership = models.ForeignKey('UserMembership', on_delete=models.CASCADE)
     reminder_date = models.DateField(null=True, blank=True)
+    lessons = models.ManyToManyField('Lesson', related_name='study_plans')

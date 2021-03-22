@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 
 from study.api.models import Lesson, Membership, UserMembership, Subscription
 from study.api.models.order import Order
+from study.api.models.study_plan import StudyPlan
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -11,13 +12,6 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = User
-
-
-class LessonFactory(factory.django.DjangoModelFactory):
-    topic = factory.Faker('pystr')
-
-    class Meta:
-        model = Lesson
 
 
 class MembershipFactory(factory.django.DjangoModelFactory):
@@ -47,3 +41,29 @@ class OrderFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Order
+
+
+class LessonFactory(factory.django.DjangoModelFactory):
+    topic = factory.Faker('pystr')
+
+    class Meta:
+        model = Lesson
+
+
+class StudyPlanFactory(factory.django.DjangoModelFactory):
+    user_membership = factory.SubFactory(UserMembershipFactory)
+    reminder_date = factory.Faker('date_object')
+
+    class Meta:
+        model = StudyPlan
+
+    @factory.post_generation
+    def lessons(self, create, extracted, **kwargs):
+        if not create:
+            # Simple build, do nothing.
+            return
+
+        if extracted:
+            # A list of groups were passed in, use them
+            for lesson in extracted:
+                self.lessons.add(lesson)
