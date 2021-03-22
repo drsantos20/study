@@ -171,7 +171,7 @@ CELERY_BROKER_URL = 'amqp://user:password@localhost:5672'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 SITE_ID = 1
 
-PAYMENT_GATEWAY_URL = 'https://run.mocky.io/v3/6d02fd73-86e6-4cb6-a3eb-79c13a50f0a8'
+PAYMENT_GATEWAY_URL = 'https://run.mocky.io/v3/0fce1390-8fc8-4167-95ef-52f2fb47fcca'
 
 if TESTING:
     DATABASES['default']['ENGINE'] = 'django.db.backends.sqlite3'
