@@ -1,3 +1,3 @@
 class PaymentResponse(object):
-    def __init__(self, payment_status):
-        self.payment_status = payment_status
+    def __init__(self, payment_status_code):
+        self.payment_status_code = payment_status_code
