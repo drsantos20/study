@@ -9,7 +9,7 @@ class StudyPlanSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = StudyPlan
-        fields = ['user_membership', 'reminder_date', 'lessons']
+        fields = ['id', 'user_membership', 'reminder_date', 'lessons']
 
 
 class StudyPlanAggregatedDataSerializer(serializers.Serializer):
