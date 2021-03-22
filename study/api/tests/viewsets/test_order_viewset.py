@@ -21,7 +21,6 @@ class TestOrderViewSet(APITestCase):
         OrderFactory(user=self.user)
 
         token = get_token_from_user(user=self.user)
-
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
 
         response = self.client.get(
