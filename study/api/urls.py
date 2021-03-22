@@ -25,6 +25,7 @@ router.register(r'lesson', viewsets.LessonViewSet, basename='lesson')
 router.register(r'user-membership', viewsets.UserMembershipViewSet, basename='user-membership')
 router.register(r'subscription', viewsets.SubscriptionViewSet, basename='subscription')
 router.register(r'order', viewsets.OrderViewSet, basename='order')
+router.register(r'study-plan', viewsets.StudyPlanViewSet, basename='study-plan')
 
 
 urlpatterns = [
