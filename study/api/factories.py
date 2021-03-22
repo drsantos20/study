@@ -53,6 +53,7 @@ class LessonFactory(factory.django.DjangoModelFactory):
 class StudyPlanFactory(factory.django.DjangoModelFactory):
     user_membership = factory.SubFactory(UserMembershipFactory)
     reminder_date = factory.Faker('date_object')
+    name = factory.Faker('pystr')
 
     class Meta:
         model = StudyPlan

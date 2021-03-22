@@ -6,6 +6,7 @@ from rest_framework.views import status
 
 from study.api.factories import LessonFactory, UserFactory, UserMembershipFactory, StudyPlanFactory, MembershipFactory
 from study.api.models.membership import PREMIUM
+from study.api.models.study_plan import StudyPlan
 from study.api.tests.utils import create_token, get_token_from_user
 
 
@@ -61,3 +62,36 @@ class TestStudyPlanViewSet(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    def test_create_study_plan_for_user(self):
+        token = get_token_from_user(user=self.user)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+        study_plan = StudyPlanFactory.build(name='AWS Certification')
+        lesson_1 = LessonFactory.build()
+        lesson_2 = LessonFactory.build()
+
+        data = json.dumps({
+            'name':  study_plan.name,
+            'lessons': [
+            {
+                'topic': lesson_1.topic,
+            },
+            {
+                'topic': lesson_2.topic,
+            }
+            ]
+        })
+
+        response = self.client.post(
+            reverse('study-plan-list', kwargs={'version': 'v1'}),
+            data=data,
+            content_type='application/json'
+        )
+
+        study_plan_created = StudyPlan.objects.get(name=study_plan.name)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        study_plan_data = json.loads(response.content)
+        self.assertEqual(study_plan_data['name'], study_plan_created.name)
+        self.assertEqual(study_plan_data['lessons'][0]['topic'], study_plan_created.lessons.all()[0].topic)
+        self.assertEqual(study_plan_data['lessons'][1]['topic'], study_plan_created.lessons.all()[1].topic)
